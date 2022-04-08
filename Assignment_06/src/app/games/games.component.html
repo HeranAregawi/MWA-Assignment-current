@@ -1,0 +1,8 @@
+<ul>
+    <li *ngFor="let game of games">
+        <a routerLink="/game/{{game._id}}">
+            {{game.title}}
+        </a>
+        <button (click) = "onDelete(game._id)">delete</button>
+    </li>
+</ul>

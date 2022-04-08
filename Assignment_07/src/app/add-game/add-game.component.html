@@ -1,0 +1,39 @@
+<form  [formGroup] = "addForm" (ngSubmit) = "add()">
+    <br>
+    <label>Title:
+        <input formControlName="title" placeHolder="Title">
+    </label><br> <br>
+
+    <label>Year:
+        <input formControlName="year" placeholder="Year">
+    </label><br> <br>
+
+    <label>Rate:
+        <input formControlName="rate" placeholder="Rate">
+    </label><br> <br>
+
+    <label>Price:
+        <input formControlName="price" placeholder="Price">
+    </label><br> <br>
+
+    <label>Minimum Players:
+        <input formControlName="minPlayers" placeholder="Minimum Players">
+    </label><br> <br>
+
+    <label>Maximum Players:
+        <input formControlName="maxPlayers" placeholder="Maximum Players">
+    </label><br> <br>
+
+    <label>Minimum Age:
+        <input formControlName="minAge" placeholder="Minimum Age">
+    </label><br> <br>
+
+   
+
+    <!-- <button routerLink = "/addPublisher">Add Publisher</button><br>
+    <button routerLink = "/addDesigners">Add Designers</button><br>
+    <button routerLink = "/addReviews">Add Reviews</button><br> -->
+
+    <br>
+    <button type="submit">Add</button>
+</form>
