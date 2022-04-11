@@ -1,0 +1,31 @@
+
+
+<div class="bg-image" style="
+            background-image: url(assets/images/hiking7.jpeg);
+            height: 100vh;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            ">
+    <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
+       
+            <h1>{{hiking.typeOfPlace}} - 
+                <star-rate [rating] = hiking.rating >
+                    
+                </star-rate>
+                </h1><br><br>
+            
+            <h5>Places: </h5>
+            <ul *ngFor=" let place of place">
+            
+                <li>Name: {{place.name}}</li>
+                <li>Country:{{place.country}}</li>
+            
+            
+            </ul>
+            <h5>Feedback: {{hiking.feedback}}</h5>
+            <button (click)="delete()">Delete</button>
+        
+    </div>
+
+</div>

@@ -1,0 +1,32 @@
+
+<div class="bg-image" style="
+            background-image: url(assets/images/hiking7.jpeg);
+            height: 100vh;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            ">
+    <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
+        <form #hikingForm="ngForm" (ngSubmit)="updateHiking(hikingForm)"><br>
+            <label>TypeOfPlace <input name="typeOfPlace" placeholder="Type of Place" ngModel
+                    value={{hiking.typeOfPlace}}> </label> <br><br>
+            <label>Rating <input name="rating" placeholder="Rating" ngModel value={{hiking.rating}}> </label><br><br>
+            <label>Feedback <input name="feedback" placeholder="Feedback" ngModel value={{hiking.feedback}}>
+            </label><br><br>
+           
+
+            <div *ngFor="let place of places">
+                <fieldset ngModelGroup="places">
+                    <h3> Places</h3>
+                    <label>Name <input name="name" placeholder="Name" ngModel value={{hiking.places.name}}> </label>
+                    <br><br>
+                    <label>Country <input name="country" placeholder="Country" ngModel> </label> <br><br>
+
+                </fieldset>
+            </div>
+
+            <button type="submit" (click)="updateHiking(hikingForm)">Save Changes</button>
+        </form>
+    </div>
+
+</div>

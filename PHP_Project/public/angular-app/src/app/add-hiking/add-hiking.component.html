@@ -1,0 +1,29 @@
+
+<div class="bg-image" style="
+            background-image: url(assets/images/hiking7.jpeg);
+            height: 100vh;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            ">
+    <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
+        <form #addHikingForm="ngForm" (ngSubmit)="addHiking(addHikingForm)"><br>
+            <label>TypeOfPlace <input name="typeOfPlace" placeholder="Type of Place" ngModel> </label> <br><br>
+            <label>Rating <input name="rating" placeholder="Rating" ngModel> </label><br><br>
+            <label>Feedback <input name="feedback" placeholder="Feedback" size="120" ngModel> </label><br><br>
+            <button *ngIf="!flag" (click)=" flag=!flag">Add Places</button><br><br>
+            
+                <fieldset *ngIf="flag" ngModelGroup="places">
+                    <h3 >Add Place</h3>
+                    <label>Name <input name="name" placeholder="Name" ngModel> </label> <br><br>
+                    <label>Country <input name="country" placeholder="Country" ngModel> </label> <br><br>
+                    <button (click)=" addPlace()">Add Place</button><br><br>
+                </fieldset>
+
+       
+
+            <button>Add Hiking</button>
+        </form>
+    </div>
+
+</div>
