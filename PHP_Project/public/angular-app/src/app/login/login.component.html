@@ -1,0 +1,23 @@
+<div *ngIf="!isLoggedIn">
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+    <br>
+    <div class="mb-3">
+      <label>User Name</label>
+      <input name="username" placeholder="User Name" ngModel>
+
+    </div>
+    <div class="mb-3">
+      <label>Password</label>
+      <input name="password" type="password" placeholder="Password" ngModel>
+    </div>
+
+    <button type="submit" class="btn btn-primary">login</button> <br><br>
+    <button type="submit" class="btn btn-primary" routerLink="/register">Create new account</button>
+  </form>
+</div>
+<div *ngIf="isLoggedIn">
+  Welcome {{name}} <br><br>
+  <button (click)="logOut()">logout</button>
+ 
+
+</div>

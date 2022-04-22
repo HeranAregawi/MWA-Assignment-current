@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { response } from 'express';
+import { AuthenticationService } from '../authentication.service';
 import { HikingsDataService } from '../hikings-data.service';
 export class Place {
   #name!: string;
@@ -47,8 +48,9 @@ export class Hiking {
 })
 
 export class HikingsComponent implements OnInit {
+  get isLoggedIn() {return this._authService.isLoggedIn}
   hikings!: Hiking[]
-  constructor(private hikingsDataService: HikingsDataService, private _router: Router) { }
+  constructor(private hikingsDataService: HikingsDataService, private _router: Router, private _authService:AuthenticationService) { }
 
   ngOnInit(): void {
     this.hikingsDataService.getHikings().subscribe(

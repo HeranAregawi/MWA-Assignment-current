@@ -1,7 +1,7 @@
 
 <div class="bg-image" style="
             background-image: url(assets/images/hiking7.jpeg);
-            height: 100vh;
+            height: 200vh;
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
@@ -11,10 +11,10 @@
             <li  *ngFor=" let hiking of hikings">
                 
                 <a routerLink="/hiking/{{hiking._id}}">{{hiking.typeOfPlace}}  </a><br>
-              
+              <div *ngIf="isLoggedIn">
                     <button type="button" class="btn btn-secondary" (click)="delete(hiking._id)">Delete</button>
                     <button type="button" class="btn btn-secondary" routerLink ="/editHiking/{{hiking._id}}">Edit</button><br><br>
-               
+                </div>
             </li>
         </ul>
     </div>

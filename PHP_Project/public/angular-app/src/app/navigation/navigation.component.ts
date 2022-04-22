@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { response } from 'express';
+import { AuthenticationService } from '../authentication.service';
 import { HikingsDataService } from '../hikings-data.service';
 import { Hiking } from '../hikings/hikings.component';
 
@@ -11,12 +12,13 @@ import { Hiking } from '../hikings/hikings.component';
   styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent implements OnInit {
+  get isLoggedIn() { return this._authService.isLoggedIn }
   @ViewChild("searchForm")
   searchForm!: NgForm
   typeOfPlace!: string
-  
+
   hikings!: Hiking[]
-  constructor(private hikingsDataService: HikingsDataService, private router: Router) {
+  constructor(private hikingsDataService: HikingsDataService, private router: Router, private _authService: AuthenticationService) {
 
   }
 
@@ -28,8 +30,8 @@ export class NavigationComponent implements OnInit {
     this.hikingsDataService.search(this.searchForm.value.typeOfPlace).subscribe({
       next: hikings => {
         this.hikings = hikings;
-       
-      
+
+
       }, error: err => {
         console.log(err);
 
@@ -38,7 +40,7 @@ export class NavigationComponent implements OnInit {
 
       }
     })
-   this.router.navigate(["search", this.searchForm.value.typeOfPlace])
+    this.router.navigate(["search", this.searchForm.value.typeOfPlace]).then(()=> window.location.reload())
 
 
   }

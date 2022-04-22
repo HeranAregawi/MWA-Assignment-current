@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { response } from 'express';
+// import { response } from 'express';
 import { runInThisContext } from 'vm';
+import { AuthenticationService } from '../authentication.service';
 import { HikingsDataService } from '../hikings-data.service';
 import { Hiking } from "../hikings/hikings.component";
 
@@ -11,10 +12,11 @@ import { Hiking } from "../hikings/hikings.component";
   styleUrls: ['./hiking.component.css']
 })
 export class HikingComponent implements OnInit {
+  get isLoggedIn() { return this._authService.isLoggedIn }
   hiking!: Hiking;
   place!: any
   // detailPlace:Object[]=new Array();
-  constructor(private route: ActivatedRoute, private hikingsDataService: HikingsDataService, private router:Router) {
+  constructor(private route: ActivatedRoute, private hikingsDataService: HikingsDataService, private router: Router, private _authService: AuthenticationService) {
     this.hiking = new Hiking("", "", 0, '', [])
   }
 
@@ -55,8 +57,8 @@ export class HikingComponent implements OnInit {
       }
     });
     this.router.navigate(["hikings"]);
-    
+
   }
-  
+
 
 }

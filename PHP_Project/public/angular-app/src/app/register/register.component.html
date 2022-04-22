@@ -1,0 +1,45 @@
+<div class="bg-image" style="
+background-image: url(assets/images/hiking7.jpeg);
+height: 150vh;
+background-repeat: no-repeat;
+background-attachment: fixed;
+background-size: cover;
+">
+    <div *ngIf="hasSuccess" class="alert alert-success">
+        <p>{{successMessage}}</p>
+    </div>
+
+    <div *ngIf="hasError" class="alert alert-danger">
+        <p>{{errorMessage}}
+        </p>
+
+    </div>
+    <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
+
+        <form #registrationForm="ngForm" (ngSubmit)="onSubmit(registrationForm)">
+            <br>
+            <div class="mb-3">
+                <label>Name:</label>
+                <input name="name" placeholder="Name" ngModel>
+            </div>
+
+            <div class="mb-3">
+                <label>User Name:</label>
+                <input name="username" placeholder="User Name" ngModel>
+            </div>
+
+            <div class="mb-3">
+                <label>Password:</label>
+                <input name="password" type="password" placeholder="Password" ngModel>
+            </div>
+
+            <div class="mb-3">
+                <label>Repeat Password:</label>
+                <input name="repeatpassword" type="password" placeholder="Repeat Password" ngModel>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sign up</button>
+        </form>
+    </div>
+
+</div>

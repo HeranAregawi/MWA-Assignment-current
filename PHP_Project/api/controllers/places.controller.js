@@ -8,81 +8,148 @@ let response = {
 const getAll = function (req, res) {
     console.log("Get All Places controller");
     const hiking_Id = req.params.hiking_Id;
+    Hiking.findById(hiking_Id).select("places")
+        .exec()
+        .then((hikingPlaces) => {
+            console.log(hikingPlaces);
+            _onSuccessfullGetPlaces(hikingPlaces, response)
+            // return hikingPlaces
+        })
+        // .then((hikingPlaces) => {
+        //     if (!hikingPlaces) {
+        //         _HikingNotFound(hikingPlaces, response)
+        //     }
+        // })
 
-    Hiking.findById(hiking_Id).select("places").exec(function (err, hikingPlaces) {
-        if (err) {
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error finding hiking"
-        } else if (!hikingPlaces) {
-            response.status = process.env.HTTP_STATUS_BAD_REQUEST;
-            response.message = "Hiking ID can not found";
-        }
-        else {
-            response.status = process.env.HTTP_STATUS_OK;
-            response.message = hikingPlaces;
-        }
-        res.status(response.status).json(response.message);
-    })
+        .catch((err) => {
+            _handleError(err, response)
+        })
+
+    _onSuccessfullGetPlaces = function (message, response) {
+        response.status = process.env.HTTP_STATUS_OK
+        response.message = message
+        _sendResponse(res, response)
+    }
+    _HikingNotFound = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NOT_FOUND
+        response.message = "Hiking ID can not found!"
+        _sendResponse(res, response)
+    }
+    _handleError = function (message, response) {
+        response.status = process.env.HTTP_STATUS_INTERNAL_ERROR
+        response.message = message
+        _sendResponse(res, response)
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
 }
 const getOne = function (req, res) {
+    console.log("get one place controller");
     const { place_Id } = req.params;
     const { hiking_Id } = req.params;
-    Hiking.findById(hiking_Id).select("places").exec(function (err, hikingPlace) {
-        const response = { status: process.env.HTTP_STATUS_OK, message: hikingPlace.places.id(place_Id) };
-        if (err) {
-            console.log("Error finding hiking ");
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error finding hiking";
+    Hiking.find({ _id: hiking_Id, "places._id": place_Id })
+        .exec()
+        .then((hikingPlace) => {
+            _onSuccessfulGetPlace(hikingPlace, response)
+        }).then((hikingPlace) => {
+            if (!hikingPlace) {
+                _hikingNotFound(hikingPlace, response)
+            }
+        })
+        .catch((err) => _handleError(err, response))
 
-        } else if (!hikingPlace) {
-            console.log("Hiking notfound");
-            response.status = process.env.HTTP_STATUS_NOT_FOUND;
-            response.message = "Hiking ID not found";
-        }
-
-        res.status(response.status).json(response.message);
-    })
-
+    _onSuccessfulGetPlace = function (message, response) {
+        response.status = process.env.HTTP_STATUS_OK
+        response.message = message
+        _sendResponse(res, response)
+    }
+    _hikingNotFound = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NOT_FOUND
+        response.message = "Hiking not found"
+        _sendResponse(res, response)
+    }
+    _handleError = function (message, response) {
+        response.status = message
+        response.message = "Error finding hiking"
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
 
 }
 
 const addOne = function (req, res) {
     const { hiking_Id } = req.params;
+    Hiking.findByIdAndUpdate({ _id: hiking_Id }, { $push: { places: req.body.places } })
+        .exec()
+        .then((hiking) => {
+            _onSuccessfulPlaceCreation(hiking, response)
+            return hiking
+        })
+        .then((hiking) => {
+            if (!hiking) {
+                _hikingNotFound(hiking, response)
+            }
+        })
+        .catch((err) => _handleError(err, response))
 
-    Hiking.findByIdAndUpdate({ _id: hiking_Id }, { $push: { places: req.body.places } }).exec((err, hiking) => {
-        const response = { status: process.env.HTTP_STATUS_OK, message: "Place created successfully" };
+    _onSuccessfulPlaceCreation = function (message, response) {
+        response.status = process.env.HTTP_STATUS_OK
+        response.message = "Place created successfully"
+        _sendResponse(res, response)
+    }
+    _hikingNotFound = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NOT_FOUND
+        response.message = "Hiking cannot found"
+        _sendResponse(res, response)
+    }
+    _handleError = function (message, response) {
+        response.status = process.env.HTTP_STATUS_INTERNAL_ERROR
+        response.message = "Error finding hiking"
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
 
-        if (err) {
-            console.log("Error finding hiking");
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error finding hiking";
+    // Hiking.findByIdAndUpdate({ _id: hiking_Id }, { $push: { places: req.body.places } }).exec((err, hiking) => {
+    //     const response = { status: process.env.HTTP_STATUS_OK, message: "Place created successfully" };
 
-        }
-        else if (!hiking) {
-            console.log("Error finding hiking");
-            response.status = process.env.HTTP_STATUS_NOT_FOUND;
-            response.message = "hiking cannot found";
-        }
+    //     if (err) {
+    //         console.log("Error finding hiking");
+    //         response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
+    //         response.message = "Error finding hiking";
 
-        res.status(res.statusCode).json(response.message);
+    //     }
+    //     else if (!hiking) {
+    //         console.log("Error finding hiking");
+    //         response.status = process.env.HTTP_STATUS_NOT_FOUND;
+    //         response.message = "hiking cannot found";
+    //     }
 
-    });
+    //     res.status(res.statusCode).json(response.message);
+
+    // });
 }
 
 const deleteOne = function (req, res) {
     console.log("delete place controller");
     const { hiking_Id, place_Id } = req.params;
-    Hiking.updateOne({ _id: hiking_Id }, { $pull: { places: { _id: place_Id } } }).exec((err, data) => {
-        const response = { status: process.env.HTTP_STATUS_NO_CONTENT, message: "Place deleted successfully" };
-        if (err) {
-            console.log();
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error deleting place";
-        }
-        res.status(response.status).json(response.message);
 
-    });
+    Hiking.updateOne({ _id: hiking_Id }, { $pull: { _id: place_Id } })
+        .exec()
+        .then((message) => _onSuccessfulDeletePlace(message, response))
+        .catch((err) => _handleError(err, response))
+    _onSuccessfulDeletePlace = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NO_CONTENT
+        response.message = "Place deleted successfully"
+        _sendResponse(res, response)
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
 }
+
 const fullUpdatePlace = function (req, res) {
     console.log("fullUpdate hiking controller");
     _updateOne(req, res, _replaceOneCallback);
@@ -99,6 +166,37 @@ const _updateOne = function (req, res, replaceHikingCallback) {
     const { place_Id } = req.params;
     isValid = mongoose.isValidObjectId(hiking_Id) && mongoose.isValidObjectId(place_Id);
     if (isValid) {
+        Hiking.findById(hiking_Id).select("places")
+            .exec()
+            .then((hiking) => {
+                _onSuccessfulUpdatePlace(hiking, response)
+                return hiking
+            })
+            .then((hiking) => {
+                if (!hiking) {
+                    _hikingNotFound(hiking, response)
+                }
+            })
+            .catch((err) => _handleError(err, response))
+        _onSuccessfulUpdatePlace = function (message, response) {
+            response.status = process.env.HTTP_STATUS_NO_CONTENT
+            response.message = message
+            _sendResponse(res, response)
+        }
+        _hikingNotFound = function (message, response) {
+            response.status = process.env.HTTP_STATUS_NOT_FOUND
+            response.message = "Hiking Id not found"
+            _sendResponse(res, response)
+        }
+        _handleError = function (message, response) {
+            response.status = process.env.HTTP_STATUS_NOT_FOUND
+            response.message = message
+            _sendResponse(res, response)
+        }
+        _sendResponse = function (res, response) {
+            res.status(response.status).json(response.message)
+        }
+
         Hiking.findById(hiking_Id).select("places").exec(function (err, hiking) {
             console.log(hiking);
             const response = { status: process.env.HTTP_STATUS_NO_CONTENT, message: hiking };
@@ -121,36 +219,78 @@ const _updateOne = function (req, res, replaceHikingCallback) {
 
 
 const _replaceOneCallback = function (req, res, place_Id, hiking) {
-    console.log("-replaceOneCallback controller");
+    console.log("replaceOneCallback controller");
     hiking.places.id(place_Id).name = req.body.name;
     hiking.places.id(place_Id).country = req.body.country;
+    hiking.save
+        .then((replacedHiking) => _onSuccefullReplacePlace(replacedHiking, response))
+        .catch((err) => _handleError(err, response))
+    _onSuccefullReplacePlace = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NO_CONTENT
+        response.message = replacedHiking
+        _sendResponse(res, response)
+    }
+    _handleError = function (message, response) {
+        response.status = process.env.HTTP_STATUS_INTERNAL_ERROR
+        response.message = message
+        _sendResponse(res, response)
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
+    hiking.save()
+        .then((place) => {
+            _onSuccessfullPartialUpdate(place, response)
+        })
+        .catch((err) => _handleError(err, response))
 
-    hiking.save(function (err, replacedHiking) {
+    _onSuccessfullPartialUpdate = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NO_CONTENT
+        response.message = message
+    }
+    _handleError = function (err, response) {
+        response.message = { message: "Error saving changes", err: err }
+        response.status = process.env.HTTP_STATUS_INTERNAL_SERVER_ERROR
+    }
 
-        const response = { status: process.env.HTTP_STATUS_NO_CONTENT, message: replacedHiking };
-        if (err) {
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error saving hiking"
-        }
-        res.status(response.status).json(response.message);
-    });
 }
 
 
 const _partialUpdateCallback = function (req, res, place_Id, hiking) {
-    console.log("-replaceOneCallback controller");
-    hiking.places.id(place_Id).name = req.body.name || hiking.places.id(place_Id).name ;
-    hiking.places.id(place_Id).country = req.body.country || hiking.places.id(place_Id).country ;
+    console.log("replaceOneCallback controller");
+    hiking.places.id(place_Id).name = req.body.name || hiking.places.id(place_Id).name;
+    hiking.places.id(place_Id).country = req.body.country || hiking.places.id(place_Id).country;
+    hiking.save()
+        .then()
+        .catch((err) => _handleError(err, response))
+    _onSuccefullUpdatePlace = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NO_CONTENT
+        response.message = replacedHiking
+        _sendResponse(res, response)
+    }
+    _handleError = function (message, response) {
+        response.status = process.env.HTTP_STATUS_INTERNAL_ERROR
+        response.message = message
+        _sendResponse(res, response)
+    }
+    _sendResponse = function (res, response) {
+        res.status(response.status).json(response.message)
+    }
+    hiking.save()
+        .then((place) => {
+            _onSuccessfullPartialUpdate(place, response)
+        })
+        .catch((err) => _handleError(err, response))
 
-    hiking.save(function (err, replacedHiking) {
+    _onSuccessfullPartialUpdate = function (message, response) {
+        response.status = process.env.HTTP_STATUS_NO_CONTENT
+        response.message = message
+    }
+    _handleError = function (err, response) {
+        response.message = { message: "Error saving changes", err: err }
+        response.status = process.env.HTTP_STATUS_INTERNAL_SERVER_ERROR
+    }
 
-        const response = { status: process.env.HTTP_STATUS_NO_CONTENT, message: replacedHiking };
-        if (err) {
-            response.status = process.env.HTTP_STATUS_INTERNAL_ERROR;
-            response.message = "Error saving hiking"
-        }
-        res.status(response.status).json(response.message);
-    });
 }
 
 // Alternative Way

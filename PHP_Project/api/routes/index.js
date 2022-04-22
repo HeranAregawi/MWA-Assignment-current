@@ -1,31 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const hikingController = require("../controllers/hikings.controller");
-const placesController = require("../controllers/places.controller");
-
-router.route("/hikings/search")
-    .get(hikingController.getHikingByTypeOfPlace)
-
-router.route("/hikings")
-    .get(hikingController.getAll)
-    .post(hikingController.addOne)
-
-router.route("/hikings/:hiking_Id")
-    .get(hikingController.getOne)
-    .delete(hikingController.deleteOne)
-    .put(hikingController.fullUpdateOne)
-    .patch(hikingController.partialUpdate)
+const hikingsRoute = require("./hikings")
+const usersRoute = require("./users")
 
 
-router.route("/hikings/:hiking_Id/places")
-    .get(placesController.getAll)
-    .put(placesController.addOne)
+router.use("/hikings", hikingsRoute)
 
-router.route("/hikings/:hiking_Id/places/:place_Id")
-    .get(placesController.getOne)
-    .delete(placesController.deleteOne)
-    .put(placesController.fullUpdatePlace)
-    .patch(placesController.partialUpdatePlace)
+router.use("/users", usersRoute)
 
-
-module.exports = router;
+module.exports = router
